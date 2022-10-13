@@ -22,11 +22,19 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.StyledEditorKit;
+import java.net.URL;
+
 @Service
 public class PdfGenrator {
     public void pdf(String pdfName) throws Exception {
         // Creating a PdfWriter
-        String dest = "D:/"+pdfName+".pdf";
+        String userDirectory = System.getProperty("user.dir");
+        System.out.println(userDirectory);
+
+
+        URL rleLogoPath = getResourceFileAsInputStream( "images/RLE-Logo.png" );
+        URL authorizedImagePath = getResourceFileAsInputStream( "images/authorised.png" );
+        String dest = userDirectory+"/"+pdfName+".pdf";
         PdfWriter writer = new PdfWriter(dest);
 
         // Creating a PdfDocument object
@@ -36,11 +44,9 @@ public class PdfGenrator {
         // Creating a Document
         Document document = new Document(pdfDoc);
 
-        String imFile = "src/main/resources/static/RLE-Logo.png";
-        String authorised="src/main/resources/static/authorised.png";
 
-        ImageData rleLogoImg = ImageDataFactory.create(imFile);
-        ImageData authorisedImg= ImageDataFactory.create(authorised);
+        ImageData rleLogoImg = ImageDataFactory.create(rleLogoPath);
+        ImageData authorisedImg= ImageDataFactory.create(authorizedImagePath);
 
 
 
@@ -576,5 +582,11 @@ public class PdfGenrator {
         // Closing the document
         document.close();
         System.out.println("List added");
+    }
+
+    public URL getResourceFileAsInputStream(String fileName )
+    {
+        ClassLoader classLoader = PdfGenrator.class.getClassLoader();
+        return classLoader.getResource(fileName);
     }
 }
